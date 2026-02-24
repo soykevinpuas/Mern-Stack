@@ -1,20 +1,14 @@
-// URL base de la API de notas
+// noteService.js
 const API_URL = "http://localhost:3000/api/notes";
 
-// Obtener token guardado tras login
-const getToken = () => localStorage.getItem("token");
-
-// Crear una nueva nota (POST /notes)
-export async function createNote(note) {
+// ⚡ Ahora la función recibe token como parámetro
+export async function createNote(note, token) {
   const res = await fetch(API_URL, {
     method: "POST",
     headers: {
-      // Indicamos que enviamos JSON
       "Content-Type": "application/json",
-      // Token para rutas protegidas
-      Authorization: `Bearer ${getToken()}`
+      Authorization: `Bearer ${token}` // ⚡ token viene del props
     },
-    // Convertimos objeto JS a JSON
     body: JSON.stringify(note),
   });
 
@@ -22,12 +16,11 @@ export async function createNote(note) {
   return res.json();
 }
 
-// Obtener todas las notas del usuario autenticado (GET /notes)
-export async function getNotes() {
+// GET todas las notas
+export async function getNotes(token) {
   const res = await fetch(API_URL, {
     headers: {
-      // Identifica al usuario mediante JWT
-      Authorization: `Bearer ${getToken()}`
+      Authorization: `Bearer ${token}`
     }
   });
 
@@ -35,30 +28,25 @@ export async function getNotes() {
   return res.json();
 }
 
-// Eliminar una nota por id (DELETE /notes/:id)
-export async function deleteNote(id) {
+// DELETE nota
+export async function deleteNote(id, token) {
   const res = await fetch(`${API_URL}/${id}`, {
     method: "DELETE",
-    headers: {
-      // Verifica que la nota pertenece al usuario
-      Authorization: `Bearer ${getToken()}`
-    }
+    headers: { Authorization: `Bearer ${token}` }
   });
 
   if (!res.ok) throw new Error("Error al eliminar nota");
   return res.json();
 }
 
-// Actualizar una nota por id (PUT /notes/:id)
-export async function updateNote(id, updatedNote) {
+// PUT nota
+export async function updateNote(id, updatedNote, token) {
   const res = await fetch(`${API_URL}/${id}`, {
     method: "PUT",
     headers: {
-      // Enviamos JSON y autenticación
       "Content-Type": "application/json",
-      Authorization: `Bearer ${getToken()}`
+      Authorization: `Bearer ${token}`
     },
-    // Datos nuevos de la nota
     body: JSON.stringify(updatedNote),
   });
 

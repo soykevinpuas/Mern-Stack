@@ -69,7 +69,7 @@ export const login = async (req, res) => {
         // Comparar contraseñas
         const isMatch = await bcrypt.compare(password, user.password);
         if(!isMatch){
-            return res.status(400),json({message: "Contraseña incorrecta"});
+            return res.status(400).json({message: "Contraseña incorrecta"});
         }
 
         // Generar Token
