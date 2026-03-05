@@ -26,6 +26,11 @@ export const getNoteById = async (req, res) => {
             return res.status(404).json({ message: "Nota no encontrada" });
         }
 
+        // Verificar propiedad
+        if (note.user.toString() !== req.userId) {
+            return res.status(403).json({ message: "No tienes permiso para ver esta nota" });
+        }
+
         // Responder con la nota
         res.json(note);
     } catch (error) {
@@ -60,6 +65,21 @@ export const createNote = async (req, res) => {
 // PUT /notes/:id - actualizar una nota
 export const updateNote = async (req, res) => {
     try {
+
+         // Buscar la nota primero
+        const note = await Note.findById(req.params.id);
+        
+          // No encontrada
+        if (!note) {
+            return res.status(404).json({ message: "Nota no encontrada" });
+        }
+
+
+        // Verificar que el usuario sea el dueño
+        if (updatedNote.user.toString() !== req.userId) {
+            return res.status(403).json({ message: "No tienes permiso para editar esta nota" });
+        }
+        
         // Actualizar por ID
         const updatedNote = await Note.findByIdAndUpdate(
             req.params.id,
@@ -67,10 +87,10 @@ export const updateNote = async (req, res) => {
             { new: true }
         );
 
-        // No encontrada
-        if (!updatedNote) {
-            return res.status(404).json({ message: "Nota no encontrada" });
-        }
+       // Verificar que la nota fue actualizada
+       if (!updatedNote) {
+           return res.status(404).json({ message: "Nota no encontrada" });
+       }
 
         // Responder con la nota actualizada
         res.json(updatedNote);
@@ -84,14 +104,21 @@ export const updateNote = async (req, res) => {
 export const deleteNote = async (req, res) => {
     try {
         // Eliminar por ID
-        const deletedNote = await Note.findByIdAndDelete(req.params.id);
+        const deletedNote = await Note.findById(req.params.id);
 
         // No encontrada
         if (!deletedNote) {
             return res.status(404).json({ message: "Nota no encontrada" });
         }
 
+        // Verificar propiedad
+        if (deletedNote.user.toString() !== req.userId) {
+            return res.status(403).json({ message: "No tienes permiso para eliminar esta nota" });
+        }
         // Eliminada
+        await Note.findByIdAndDelete(req.params.id);
+
+       
         res.json({ message: "Nota eliminada correctamente" });
     } catch (error) {
         // Error del servidor

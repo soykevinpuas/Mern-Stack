@@ -7,7 +7,7 @@ export const authMiddlware = (req, res, next,) => {
 
         // si no hay token 
         if (!authHeader){
-            return res.estatus(401).json({message: "Token requerido."});
+            return res.status(401).json({message: "Token requerido."});
         }
 
         // Formato : Bearer token : extrae el token limpio
