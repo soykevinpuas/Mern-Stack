@@ -3,7 +3,7 @@ import { VStack, Input, Button, Text } from "@chakra-ui/react";
 
 // Componente de Login
 // setToken → función del componente padre para guardar el token una vez logueado
-export default function LoginForm({ setToken }) {
+export default function LoginForm({ setToken,setUser }) {
   // Estados para los inputs y errores
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,10 +24,23 @@ export default function LoginForm({ setToken }) {
 
       const data = await res.json(); // respuesta del backend
 
+      console.log("Data completa:", data);
+      console.log("User:", data.user);
+      console.log("Email:", data.user?.email);
+      console.log("Name:", data.user?.name);
+
       if (!res.ok) throw new Error(data.message || "Error en login");
 
       // Guardar token en el estado del componente padre
       setToken(data.token);
+
+      // Guardar el usuario en el estado del componente padre
+      setUser(data.user);
+
+      // Guardar token y usuario en el localStorage
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
 
       // Optional: mostrar info del usuario
       console.log("Usuario logueado:", data.user);

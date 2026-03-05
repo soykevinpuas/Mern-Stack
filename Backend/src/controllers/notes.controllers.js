@@ -76,7 +76,7 @@ export const updateNote = async (req, res) => {
 
 
         // Verificar que el usuario sea el dueño
-        if (updatedNote.user.toString() !== req.userId) {
+        if (note.user.toString() !== req.userId) {
             return res.status(403).json({ message: "No tienes permiso para editar esta nota" });
         }
         

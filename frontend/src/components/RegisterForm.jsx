@@ -3,7 +3,9 @@ import { VStack, Input, Button, Text } from "@chakra-ui/react";
 
 // Componente de Registro
 // setToken → función del componente padre para guardar el token después del registro
-export default function RegisterForm({ setToken }) {
+// setUser → función del componente padre para guardar el usuario después del registro
+export default function RegisterForm({ setToken, setUser }) {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -17,7 +19,7 @@ export default function RegisterForm({ setToken }) {
       const res = await fetch("http://localhost:3000/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ name, email, password }),
       });
 
       const data = await res.json();
@@ -27,6 +29,14 @@ export default function RegisterForm({ setToken }) {
       // Guardar token
       setToken(data.token);
       localStorage.setItem("token",data.token);
+
+      // Guardar el usuario
+      setUser(data.user);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      // Guardar en localstorage
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
 
       // Optional: mostrar info del usuario
       console.log("Usuario registrado:", data.user);
@@ -38,6 +48,12 @@ export default function RegisterForm({ setToken }) {
 
   return (
     <VStack as="form" spacing={4} onSubmit={handleRegister}>
+      <Input
+        placeholder="Name"
+        type="text"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+      />
       <Input
         placeholder="Email"
         type="email"

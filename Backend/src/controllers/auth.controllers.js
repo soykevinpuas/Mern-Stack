@@ -5,10 +5,10 @@ import jwt from "jsonwebtoken";
 // funcion que maneja POST / register
 export const register = async ( req, res ) => {
     try {
-        const { email, password } = req.body;
+        const { email, password,name } = req.body;
             // validar datos 
-        if (!email || !password) {
-            return res.status(400).json({message: "Email y contraseña requeridos "});
+        if (!email || !password || !name) {
+            return res.status(400).json({message: "Email, contraseña y nombre son requeridos "});
         }
             //verificar si el usuario existe 
         const existingUser = await User.findOne({email});
@@ -23,6 +23,7 @@ export const register = async ( req, res ) => {
         const user = await User.create({
             email,
             password: hashedPassword,
+            name,
         });
 
 
@@ -41,6 +42,7 @@ export const register = async ( req, res ) => {
             user: {
                 id: user._id,
                 email: user.email,
+                name: user.name,
             },
         });
         // Cualquier error (avisar)
@@ -85,6 +87,7 @@ export const login = async (req, res) => {
         user: {
             id: user._id,
             email: user.email,
+            name: user.name,
         },
        });
     } catch(error){
